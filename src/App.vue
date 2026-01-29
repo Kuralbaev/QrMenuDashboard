@@ -100,8 +100,8 @@ onMounted(() => {
         </option>
       </select>
       <!-- exit button -->
-      <button @click="logout" v-if="authStore.isAuthenticated" class="text-sm ml-2 text-gray-500 hover:text-gray-700 border border-gray-200 rounded-md p-1 h-8 w-8 flex items-center justify-center">
-        <LogOut class="w-4 h-4" />
+      <button @click="logout" v-if="authStore.isAuthenticated" class="text-sm ml-2 text-red-500 hover:text-red-700 border border-red-200 rounded-md p-1 h-8 w-8 flex items-center justify-center">
+        <LogOut class="w-4 h-4 text-red-500" />
       </button>
     </div>
     

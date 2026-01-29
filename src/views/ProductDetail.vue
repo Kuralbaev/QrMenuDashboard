@@ -3,8 +3,8 @@
     <!-- Заголовок -->
     <div class="mb-6">
       <div class="flex gap-4 mb-4">
-        <Button variant="outline" @click="goBack" class="p-3">
-          <img src="../assets/images/icons/up.png" alt="chevron-right" class="h-[6px] rotate-90">
+        <Button variant="outline" @click="goBack" class="h-8 w-8 flex items-center justify-center">
+          <ArrowLeft class="w-4 h-4 text-gray-700" />
         </Button>
       </div>
     </div>
@@ -329,6 +329,7 @@ import { useDateTime } from '../composables/useDateTime'
 import { useI18n } from 'vue-i18n'
 import { API_BASE_URL } from '../env'
 import type { Product } from '../types/api'
+import { ArrowLeft } from 'lucide-vue-next'
 
 const { t, locale } = useI18n()
 
