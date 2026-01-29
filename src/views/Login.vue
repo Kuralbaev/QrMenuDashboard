@@ -1,8 +1,8 @@
 <template>
   <div class="flex min-h-screen items-center justify-center bg-background p-6">
-    <div class="w-full max-w-md space-y-6">
+    <div class="w-full max-w-md space-y-10">
       <div class="text-center space-y-2">
-        <h1 class="text-3xl font-bold">Вход</h1>
+        <img src="../assets/images/logo_black.png" alt="logo" class="h-16 mx-auto">
       </div>
 
       <form @submit.prevent="handleSubmit" class="space-y-4">

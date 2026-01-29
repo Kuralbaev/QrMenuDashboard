@@ -36,6 +36,8 @@
     "cookingTime": "Время готовки (мин)",
     "dishType": "Тип блюда",
     "selectDishType": "Выберите тип блюда",
+    "recommendation": "Рекомендация",
+    "recommendationLabel": "Отметить как рекомендуемое блюдо",
     "status": "Статус публикации",
     "published": "Опубликован",
     "draft": "Не опубликован",

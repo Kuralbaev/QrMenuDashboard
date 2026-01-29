@@ -244,6 +244,22 @@
           </select>
         </div>
 
+        <!-- Рекомендация -->
+        <div class="space-y-4 border border-gray-200 p-3 rounded-lg">
+          <Label for="recommendation" class="mb-2 block">{{ t('product.recommendation') }}</Label>
+          <div class="flex items-center gap-3">
+            <input
+              id="recommendation"
+              type="checkbox"
+              v-model="formData.recommendation"
+              class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+            />
+            <label for="recommendation" class="text-sm text-gray-700 cursor-pointer">
+              {{ t('product.recommendationLabel') }}
+            </label>
+          </div>
+        </div>
+
         <!-- Даты -->
         <div v-if="product" class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
           <div>
@@ -340,6 +356,7 @@ const formData = reactive<Record<string, any>>({
   status: 'draft',
   cooking_time: '',
   dish_type: '',
+  recommendation: false,
 })
 
 // Маппинг языковых кодов на названия
@@ -407,7 +424,7 @@ const loadProduct = async () => {
     
     // Очищаем formData
     Object.keys(formData).forEach((key) => {
-      if (key !== 'price' && key !== 'published') {
+      if (key !== 'price' && key !== 'published' && key !== 'recommendation') {
         delete formData[key]
       }
     })
@@ -428,6 +445,7 @@ const loadProduct = async () => {
     formData.status = data.status || 'draft'
     formData.cooking_time = String(data.cooking_time || 0)
     formData.dish_type = data.dish_type || ''
+    formData.recommendation = data.recommendation || false
   } catch (err) {
     console.error('Ошибка при загрузке продукта:', err)
     error.value = t('product.loadError')
@@ -449,6 +467,7 @@ const handleSubmit = async () => {
       old_price: parseFloat(formData.old_price) || 0,
       cooking_time: formData.cooking_time || null,
       dish_type: formData.dish_type || null,
+      recommendation: formData.recommendation || false,
     }
 
     // Добавляем все языковые поля для title

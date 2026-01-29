@@ -6,7 +6,7 @@ const token = process.env.TELEGRAM_BOT_TOKEN || '8515123101:AAEHagc4FptuobxOs0er
 // URL вашего Mini App (замените на ваш реальный URL)
 // Для разработки можно использовать ngrok или другой туннель
 // Для продакшена используйте ваш домен с HTTPS
-const MINI_APP_URL = process.env.MINI_APP_URL || 'https://ed445e214b3f.ngrok-free.app';
+const MINI_APP_URL = process.env.MINI_APP_URL || 'https://dashboard.luniq.net';
 
 // Проверка токена
 if (!token || token === 'YOUR_BOT_TOKEN') {

@@ -2,10 +2,13 @@
 import { ref, watch, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import { Home, UtensilsCrossed, MessageSquare } from 'lucide-vue-next'
+import { Home, UtensilsCrossed, MessageSquare, LogOut } from 'lucide-vue-next'
 import { i18n } from './i18n'
 import { useTelegram } from './composables/useTelegram'
+import { useAuthStore } from './store/authStore'
+import router from './router'
 
+const authStore = useAuthStore()
 const { locale, t } = useI18n()
 const route = useRoute()
 const { isTelegram, themeParams } = useTelegram()
@@ -43,6 +46,12 @@ const isActive = (path: string) => {
     return route.path === '/'
   }
   return route.path.startsWith(path)
+}
+
+
+const logout = () => {
+  authStore.logout()
+  router.push('/login')
 }
 
 // Вычисляемые стили для Telegram темы
@@ -84,12 +93,16 @@ onMounted(() => {
       <select
         :value="currentLocale"
         @change="changeLocale"
-        class="flex h-9 rounded-md border border-input bg-white px-3 py-1 text-sm shadow-xs transition-all focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring cursor-pointer"
+        class="flex rounded-md border border-input bg-white h-8 px-1 text-xs shadow-xs transition-all focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring cursor-pointer"
       >
         <option v-for="lang in languages" :key="lang.code" :value="lang.code">
           {{ lang.label }}
         </option>
       </select>
+      <!-- exit button -->
+      <button @click="logout" v-if="authStore.isAuthenticated" class="text-sm ml-2 text-gray-500 hover:text-gray-700 border border-gray-200 rounded-md p-1 h-8 w-8 flex items-center justify-center">
+        <LogOut class="w-4 h-4" />
+      </button>
     </div>
     
     <router-view />

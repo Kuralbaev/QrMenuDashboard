@@ -36,6 +36,8 @@
     "cookingTime": "Дайындалу уақыты (мин)",
     "dishType": "Тағам түрі",
     "selectDishType": "Тағам түрін таңдаңыз",
+    "recommendation": "Ұсыныс",
+    "recommendationLabel": "Ұсынылатын тағам ретінде белгілеу",
     "status": "Жариялану күйі",
     "published": "Жарияланған",
     "draft": "Жарияланбаған",

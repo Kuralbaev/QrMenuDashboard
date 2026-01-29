@@ -36,6 +36,8 @@
     "cookingTime": "Cooking Time (min)",
     "dishType": "Dish Type",
     "selectDishType": "Select dish type",
+    "recommendation": "Recommendation",
+    "recommendationLabel": "Mark as recommended dish",
     "status": "Publication Status",
     "published": "Published",
     "draft": "Not Published",
