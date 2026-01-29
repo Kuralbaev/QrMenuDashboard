@@ -1,0 +1,56 @@
+/* Telegram Mini App стили */
+
+:root {
+  /* Telegram theme colors - будут переопределены через JS */
+  --tg-theme-bg-color: #ffffff;
+  --tg-theme-text-color: #000000;
+  --tg-theme-hint-color: #999999;
+  --tg-theme-link-color: #2481cc;
+  --tg-theme-button-color: #2481cc;
+  --tg-theme-button-text-color: #ffffff;
+  --tg-theme-secondary-bg-color: #f1f1f1;
+}
+
+/* Безопасная зона для Telegram */
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.safe-area-inset-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+/* Адаптация для Telegram Mini App */
+@media (max-width: 480px) {
+  body {
+    /* Убираем стандартные отступы браузера */
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Стили для элементов в Telegram */
+.tg-theme-bg {
+  background-color: var(--tg-theme-bg-color);
+}
+
+.tg-theme-text {
+  color: var(--tg-theme-text-color);
+}
+
+.tg-theme-hint {
+  color: var(--tg-theme-hint-color);
+}
+
+.tg-theme-link {
+  color: var(--tg-theme-link-color);
+}
+
+.tg-theme-button {
+  background-color: var(--tg-theme-button-color);
+  color: var(--tg-theme-button-text-color);
+}
+
+.tg-theme-secondary-bg {
+  background-color: var(--tg-theme-secondary-bg-color);
+}
