@@ -49,10 +49,10 @@
               </span>
             </div>
             <p v-if="product.old_price" class="text-[10px] font-medium text-gray-500">
-              {{ formatPrice(product.old_price) }}
+              {{ formatPrice(product.old_price) }} {{ restaurant?.currency }}
             </p>
             <p class="text-[15px] font-bold text-gray-900">
-              {{ formatPrice(product.price) }}
+              {{ formatPrice(product.price) }} {{ restaurant?.currency }}
             </p>
           </div>
           <div v-if="product.image && typeof product.image === 'object'">
@@ -119,11 +119,14 @@ import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { useDateTime } from '../composables/useDateTime'
 import { API_BASE_URL, STATUS_LABELS } from '../env'
+import { useRestaurantStore } from '../store/restaurantStore'
 
 const { t, locale } = useI18n()
 
 const router = useRouter()
 const productStore = useProductStore()
+const restaurantStore = useRestaurantStore()
+const { restaurant } = storeToRefs(restaurantStore)
 const { products, total, pagination } = storeToRefs(productStore)
 const { formatDate } = useDateTime()
 

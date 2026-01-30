@@ -7,11 +7,17 @@ import { i18n } from './i18n'
 import { useTelegram } from './composables/useTelegram'
 import { useAuthStore } from './store/authStore'
 import router from './router'
+import { useRestaurantStore } from './store/restaurantStore'
+import { useProductStore } from './store/productStore'
 
 const authStore = useAuthStore()
+const restaurantStore = useRestaurantStore()
+const productStore = useProductStore()
 const { locale, t } = useI18n()
 const route = useRoute()
 const { isTelegram, themeParams } = useTelegram()
+
+const initialLoading = ref(true)
 
 const languages = [
   { code: 'ru', label: 'RU' },
@@ -69,12 +75,43 @@ const telegramStyles = computed(() => {
   }
 })
 
-onMounted(() => {
+const loadInitialData = async () => {
+  // Загружаем ресторан и продукты только если пользователь авторизован и не на странице логина
+  if (authStore.isAuthenticated && route.path !== '/login') {
+    initialLoading.value = true
+    try {
+      await Promise.all([
+        restaurantStore.fetchRestaurants(),
+        productStore.fetchProducts()
+      ])
+    } catch (error) {
+      console.error('Ошибка при загрузке начальных данных:', error)
+    } finally {
+      initialLoading.value = false
+    }
+  } else {
+    initialLoading.value = false
+  }
+}
+
+onMounted(async () => {
   // Применяем стили Telegram при монтировании
   if (isTelegram.value && themeParams.value) {
     Object.entries(telegramStyles.value).forEach(([key, value]) => {
       document.documentElement.style.setProperty(key, value as string)
     })
+  }
+  
+  await loadInitialData()
+})
+
+// Отслеживаем изменения маршрута для загрузки данных при переходе с логина
+watch(() => route.path, async (newPath) => {
+  if (newPath !== '/login' && authStore.isAuthenticated) {
+    // Если данные еще не загружены, загружаем их
+    if (!restaurantStore.restaurant || productStore.products.length === 0) {
+      await loadInitialData()
+    }
   }
 })
 </script>
@@ -105,7 +142,15 @@ onMounted(() => {
       </button>
     </div>
     
-    <router-view />
+    <!-- Лоадер начальной загрузки -->
+    <div v-if="initialLoading && route.path !== '/login'" class="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm">
+      <div class="flex flex-col items-center gap-4">
+        <div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+        <p class="text-sm text-gray-600">{{ t('common.loading') }}</p>
+      </div>
+    </div>
+    
+    <router-view v-if="!initialLoading || route.path === '/login'" />
     
     <!-- Нижняя навигация -->
     <nav 

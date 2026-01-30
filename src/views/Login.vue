@@ -64,8 +64,8 @@ import { Label } from '../components/ui/label'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const email = ref('')
-const password = ref('')
+const email = ref('qonaq_restaurant@luniq.net')
+const password = ref('Pqx3rFsEyX')
 const isLoading = ref(false)
 const errors = ref<{
   email?: string

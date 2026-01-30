@@ -7,14 +7,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useProductStore } from '../store/productStore'
 const { t } = useI18n()
 
 const { total } = storeToRefs(useProductStore())
-onMounted(() => {
-  useProductStore().fetchProducts()
-})
+// Продукты уже загружаются в App.vue при монтировании
 </script>

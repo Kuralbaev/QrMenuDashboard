@@ -62,6 +62,17 @@ export interface PaginatedResponse<T> {
   }
 }
 
+export interface StrapiPaginationMeta {
+  pagination: {
+    page: number
+    pageSize: number
+    pageCount: number
+    total: number
+  }
+}
+
+export type StrapiRestApiResponse<T> = [T[], StrapiPaginationMeta]
+
 export interface Review {
   id: number
   documentId?: string
@@ -69,6 +80,21 @@ export interface Review {
   star?: string | number
   name?: string
   phone?: string
+  createdAt: string
+  updatedAt: string
+  publishedAt?: string
+  [key: string]: any
+}
+
+export interface Restaurant {
+  id: number
+  documentId?: string
+  title_ru?: string
+  title_en?: string
+  title_kk?: string
+  description_ru?: string
+  description_en?: string
+  description_kk?: string
   createdAt: string
   updatedAt: string
   publishedAt?: string

@@ -1,21 +1,16 @@
 import { getReviewsFromApi, type GetReviewsParams } from '../api/review'
-import type { Review } from '../types/api'
+import type { Review, StrapiPaginationMeta, StrapiRestApiResponse } from '../types/api'
+
+export interface ReviewsResponse {
+  data: Review[]
+  meta: StrapiPaginationMeta
+}
 
 export function useReviewService() {
-  async function getAll(params?: GetReviewsParams): Promise<Review[]> {
-    const response = await getReviewsFromApi(params)
+  async function getAll(params?: GetReviewsParams): Promise<StrapiRestApiResponse<Review>> {
+    const response: StrapiRestApiResponse<Review> = await getReviewsFromApi(params)
 
-    // Если ответ - массив, возвращаем его
-    if (Array.isArray(response)) {
-      return response
-    }
-
-    // Если ответ - объект с data, возвращаем data
-    if (response && typeof response === 'object' && 'data' in response) {
-      return response.data
-    }
-
-    return []
+    return response
   }
 
   return {

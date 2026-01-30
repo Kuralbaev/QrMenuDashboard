@@ -3,8 +3,8 @@
     <!-- Заголовок -->
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ t('reviews.title') }}</h1>
-      <p v-if="reviews.length > 0" class="text-sm text-gray-500">
-        {{ reviews.length }} {{ reviews.length === 1 ? t('reviews.review') : t('reviews.reviews') }}
+      <p v-if="total > 0" class="text-sm text-gray-500">
+        {{ t('products.found') }} {{ total }} {{ total === 1 ? t('reviews.review') : t('reviews.reviews') }}
       </p>
     </div>
 
@@ -35,8 +35,8 @@
                 <h3 class="font-semibold text-gray-900 truncate">
                   {{ review.name || t('reviews.anonymous') }}
                 </h3>
-                <p v-if="review.phone" class="text-xs text-gray-500 truncate">
-                  {{ review.phone }}
+                <p v-if="review.phone" class="text-xs text-gray-500 truncate flex items-center gap-1">
+                  <PhoneIcon class="w-3" /> {{ review.phone }}
                 </p>
               </div>
             </div>
@@ -48,8 +48,8 @@
         </div>
         
         <!-- Текст отзыва -->
-        <p v-if="review.title" class="text-sm text-gray-700 mb-4 line-clamp-3 leading-relaxed">
-          {{ review.title }}
+        <p v-if="review.comment" class="text-sm text-gray-700 mb-4 line-clamp-3 leading-relaxed">
+          {{ review.comment }}
         </p>
         
         <!-- Нижняя часть с датой -->
@@ -82,6 +82,32 @@
           <p class="text-base font-medium text-gray-900 mb-1">{{ t('reviews.noReviews') }}</p>
           <p class="text-sm text-gray-500">{{ t('reviews.noReviewsDesc') }}</p>
         </div>
+      </div>
+    </div>
+
+    <!-- Пагинация -->
+    <div v-if="total > 0 && totalPages > 1" class="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
+      <div class="text-sm text-gray-500">
+        {{ t('products.page') }} {{ pagination.page || 1 }} {{ t('products.of') }} {{ totalPages }}
+      </div>
+      <div class="flex items-center gap-2">
+        <Button
+          variant="outline"
+          @click="changePage((pagination.page || 1) - 1)"
+          :disabled="!pagination.page || pagination.page <= 1"
+        >
+          <img src="../assets/images/icons/up.png" alt="chevron-left" class="h-[6px] rotate-90">
+        </Button>
+        <span class="text-sm text-gray-700 min-w-[60px] text-center">
+          {{ pagination.page || 1 }} / {{ totalPages }}
+        </span>
+        <Button
+          variant="outline"
+          @click="changePage((pagination.page || 1) + 1)"
+          :disabled="!pagination.page || pagination.page >= totalPages"
+        >
+          <img src="../assets/images/icons/up.png" alt="chevron-right" class="h-[6px] rotate-270">
+        </Button>
       </div>
     </div>
 
@@ -129,29 +155,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { Teleport } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useReviewService } from '../services/reviewService'
+import { storeToRefs } from 'pinia'
+import { useReviewStore } from '../store/reviewStore'
 import { useDateTime } from '../composables/useDateTime'
 import type { Review } from '../types/api'
+import { PhoneIcon } from 'lucide-vue-next'
+import { Button } from '../components/ui/button'
 
 const { t } = useI18n()
 const { formatDate } = useDateTime()
-const reviewService = useReviewService()
+const reviewStore = useReviewStore()
+const { reviews, total, pagination } = storeToRefs(reviewStore)
 
-const reviews = ref<Review[]>([])
 const loading = ref(false)
 const selectedReview = ref<Review | null>(null)
+
+const totalPages = computed(() => {
+  return Math.ceil(total.value / (pagination.value.pageSize || 10))
+})
 
 const fetchReviews = async () => {
   loading.value = true
   try {
-    reviews.value = await reviewService.getAll()
+    await reviewStore.fetchReviews()
   } catch (error) {
     console.error('Ошибка при загрузке отзывов:', error)
   } finally {
     loading.value = false
+  }
+}
+
+const changePage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    reviewStore.changePage(page)
+    fetchReviews()
   }
 }
 
@@ -173,6 +213,16 @@ const handleEscape = (event: KeyboardEvent) => {
     closeModal()
   }
 }
+
+// Отслеживание изменений пагинации
+watch(
+  () => pagination.value.page,
+  (newPage, oldPage) => {
+    if (newPage !== oldPage && oldPage !== undefined) {
+      fetchReviews()
+    }
+  }
+)
 
 onMounted(() => {
   fetchReviews()
