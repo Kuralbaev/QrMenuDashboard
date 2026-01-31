@@ -134,7 +134,7 @@
                   </svg>
                   <h4 class="text-[12px] font-semibold text-gray-700 uppercase tracking-wide">{{ t('reviews.comment') }}</h4>
                 </div>
-                <p class="text-base text-gray-700 leading-relaxed whitespace-pre-wrap">{{ selectedReview.title }}</p>
+                <p class="text-base text-gray-700 leading-relaxed whitespace-pre-wrap">{{ selectedReview.comment }}</p>
               </div>
             </div>
 
