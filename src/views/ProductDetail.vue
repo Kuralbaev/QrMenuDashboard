@@ -503,7 +503,7 @@ const handleSubmit = async () => {
     delete updateData.status
 
     await productService.update(productId.value, updateData)
-    await togglePublish(true)
+    await togglePublish(true, true)
     
     successMessage.value = t('product.updated')
     
@@ -522,16 +522,15 @@ const handleSubmit = async () => {
   }
 }
 
-const togglePublish = async (publish: boolean) => {
+const togglePublish = async (publish: boolean, save: boolean = false) => {
   const targetStatus = publish ? 'published' : 'draft'
-  if (!product.value || formData.status === targetStatus) return
   publishing.value = true
   error.value = null
   successMessage.value = null
 
   try {
     // Используем специальные endpoints Strapi для публикации/снятия с публикации
-    if (publish) {
+    if (publish || save) {
       await productService.publish(productId.value as string)
     } else {
       await productService.unpublish(productId.value as string)
