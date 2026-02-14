@@ -38,6 +38,7 @@
     "selectDishType": "Select dish type",
     "recommendation": "Recommendation",
     "recommendationLabel": "Mark as recommended dish",
+    "levelOfDifficulty": "Product Position",
     "status": "Publication Status",
     "published": "Published",
     "draft": "Not Published",
