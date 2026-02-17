@@ -306,12 +306,7 @@
           <Label for="level" class="mb-2 block">
             {{ t('product.level') }}
           </Label>
-          <Input
-            id="level"
-            v-model="formData.level"
-            type="number"
-            placeholder="1"
-          />
+          <Input id="level" v-model="formData.level" type="number" />
         </div>
 
         <!-- Даты -->
@@ -420,7 +415,7 @@ const formData = reactive<Record<string, any>>({
   status: 'draft',
   cooking_time: '',
   dish_type: '',
-  level: 1,
+  level: '',
   recommendation: false,
 })
 
@@ -518,7 +513,7 @@ const loadProduct = async () => {
     formData.status = data.status || 'draft'
     formData.cooking_time = String(data.cooking_time || 0)
     formData.dish_type = data.dish_type || ''
-    formData.level = data.level || 1
+    formData.level = data.level || ''
     formData.recommendation = data.recommendation || false
   } catch (err) {
     console.error('Ошибка при загрузке продукта:', err)
@@ -541,7 +536,7 @@ const handleSubmit = async () => {
       old_price: parseFloat(formData.old_price) || 0,
       cooking_time: formData.cooking_time || null,
       dish_type: formData.dish_type || null,
-      level: parseInt(String(formData.level)) || 1,
+      level: formData.level || null,
       recommendation: formData.recommendation || false,
     }
 
