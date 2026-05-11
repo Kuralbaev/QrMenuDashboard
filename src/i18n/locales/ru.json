@@ -33,6 +33,10 @@
     "description": "Описание продукта",
     "price": "Цена",
     "oldPrice": "Цена со скидкой",
+    "listPrices": "Варианты объёма и цены",
+    "listPriceRow": "Позиция {n}",
+    "listPriceVariantTitle": "Подпись ({code})",
+    "addPriceRow": "Добавить позицию",
     "cookingTime": "Время готовки (мин)",
     "dishType": "Тип блюда",
     "selectDishType": "Выберите тип блюда",
@@ -73,7 +77,8 @@
     "halal": "Халяль",
     "new": "Новинка",
     "chef": "Шеф-повар",
-    "fitnes": "Фитнес"
+    "fitnes": "Фитнес",
+    "pre_order": "Предварительный заказ"
   },
   "navbar": {
     "home": "Главная",

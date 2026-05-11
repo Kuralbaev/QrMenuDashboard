@@ -33,6 +33,10 @@
     "description": "Өнім сипаттамасы",
     "price": "Бағасы",
     "oldPrice": "Жеңілдікпен баға",
+    "listPrices": "Көлем мен баға нұсқалары",
+    "listPriceRow": "Позиция {n}",
+    "listPriceVariantTitle": "Таңба ({code})",
+    "addPriceRow": "Позиция қосу",
     "cookingTime": "Дайындалу уақыты (мин)",
     "dishType": "Тағам түрі",
     "selectDishType": "Тағам түрін таңдаңыз",
@@ -73,7 +77,8 @@
     "halal": "Халал",
     "new": "Жаңа",
     "chef": "Аспазшыдан",
-    "fitnes": "Фитнес"
+    "fitnes": "Фитнес",
+    "pre_order": "Алдын ала тапсырыс беру"
   },
   "navbar": {
     "home": "Басты",

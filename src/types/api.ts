@@ -24,6 +24,12 @@ export interface Image {
   [key: string]: any
 }
 
+export interface ProductListPriceItem {
+  id?: number
+  price?: number
+  [key: string]: string | number | undefined
+}
+
 export interface Product {
   id: number
   name?: string
@@ -35,6 +41,7 @@ export interface Product {
   createdAt: string
   updatedAt: string
   publishedAt?: string
+  list_price?: ProductListPriceItem[]
   [key: string]: any
 }
 

@@ -33,6 +33,10 @@
     "description": "Product Description",
     "price": "Price",
     "oldPrice": "Discounted Price",
+    "listPrices": "Volume and price options",
+    "listPriceRow": "Option {n}",
+    "listPriceVariantTitle": "Label ({code})",
+    "addPriceRow": "Add option",
     "cookingTime": "Cooking Time (min)",
     "dishType": "Dish Type",
     "selectDishType": "Select dish type",
@@ -73,7 +77,8 @@
     "halal": "Halal",
     "new": "New",
     "chef": "Chef's Choice",
-    "fitnes": "Fitness"
+    "fitnes": "Fitness",
+    "pre_order": "Pre-order"
   },
   "navbar": {
     "home": "Home",

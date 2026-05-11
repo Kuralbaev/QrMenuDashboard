@@ -173,7 +173,6 @@
         </div>
 
         <!-- Цена -->
-        <div></div>
         <div class="space-y-4 border border-gray-200 p-3 rounded-lg">
           <Label for="price" class="mb-2 block">{{ t('product.price') }}</Label>
           <Input
@@ -198,6 +197,117 @@
             placeholder="0.00"
             class="w-full"
           />
+        </div>
+
+        <!-- Варианты объёма / цены (list_price) -->
+        <div class="space-y-4 border border-gray-200 p-3 rounded-lg">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <h2 class="text-base font-medium">{{ t('product.listPrices') }}</h2>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              @click="addListPriceRow"
+            >
+              {{ t('product.addPriceRow') }}
+            </Button>
+          </div>
+
+          <p v-if="listPriceRows.length === 0" class="text-sm text-gray-500">
+            —
+          </p>
+
+          <div
+            v-else
+            class="rounded-lg border border-gray-200 divide-y divide-gray-200 overflow-hidden"
+          >
+            <div
+              v-for="(row, idx) in listPriceRows"
+              :key="row.id != null ? `id-${row.id}` : `row-${idx}`"
+              class="bg-gray-50/50"
+            >
+              <div
+                class="flex w-full items-stretch gap-1 min-h-[3rem]"
+                :class="[
+                  isListPriceAccordionOpen(idx)
+                    ? 'bg-white border-b border-gray-100'
+                    : '',
+                ]"
+              >
+                <button
+                  type="button"
+                  class="flex flex-1 items-center gap-3 px-3 py-3 text-left min-w-0 hover:bg-gray-100/80 transition-colors"
+                  :aria-expanded="isListPriceAccordionOpen(idx)"
+                  @click="toggleListPriceAccordion(idx)"
+                >
+                  <ChevronDown
+                    class="h-5 w-5 shrink-0 text-gray-500 transition-transform duration-200"
+                    :class="{ '-rotate-180': isListPriceAccordionOpen(idx) }"
+                  />
+                  <span class="text-sm font-medium text-gray-900 shrink-0">
+                    {{ t('product.listPriceRow', { n: idx + 1 }) }}
+                  </span>
+                  <span
+                    v-if="listPriceRowSummary(row)"
+                    class="text-sm text-gray-500 truncate"
+                  >
+                    {{ listPriceRowSummary(row) }}
+                  </span>
+                </button>
+                <div class="flex items-center pr-2 py-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    class="text-red-600 border-red-200 shrink-0"
+                    @click.stop="removeListPriceRow(idx)"
+                  >
+                    {{ t('common.delete') }}
+                  </Button>
+                </div>
+              </div>
+
+              <div
+                v-show="isListPriceAccordionOpen(idx)"
+                class="px-3 pb-4 pt-1 space-y-3 bg-white border-b border-gray-100 last:border-b-0"
+              >
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  <div
+                    v-for="tkey in listPriceTitleKeys"
+                    :key="`${idx}-${tkey}`"
+                    class="space-y-1"
+                  >
+                    <Label :for="`${idx}-${tkey}`">
+                      {{
+                        t('product.listPriceVariantTitle', {
+                          code: titleKeyLanguageLabel(tkey),
+                        })
+                      }}
+                    </Label>
+                    <Input
+                      :id="`${idx}-${tkey}`"
+                      v-model="row.titles[tkey]"
+                      type="text"
+                      class="w-full"
+                    />
+                  </div>
+                </div>
+
+                <div class="space-y-1 max-w-xs">
+                  <Label :for="`list-price-price-${idx}`">
+                    {{ t('product.price') }}
+                  </Label>
+                  <Input
+                    :id="`list-price-price-${idx}`"
+                    v-model="row.price"
+                    type="text"
+                    placeholder="0"
+                    class="w-full"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Статус публикации -->
@@ -277,6 +387,7 @@
             <option value="new">{{ t('dishTypes.new') }}</option>
             <option value="chef">{{ t('dishTypes.chef') }}</option>
             <option value="fitnes">{{ t('dishTypes.fitnes') }}</option>
+            <option value="pre_order">{{ t('dishTypes.pre_order') }}</option>
           </select>
         </div>
 
@@ -387,7 +498,7 @@ import { useDateTime } from '../composables/useDateTime'
 import { useI18n } from 'vue-i18n'
 import { API_BASE_URL } from '../env'
 import type { Product } from '../types/api'
-import { ArrowLeft } from 'lucide-vue-next'
+import { ArrowLeft, ChevronDown } from 'lucide-vue-next'
 
 const { t, locale } = useI18n()
 
@@ -478,12 +589,159 @@ const productId = computed(() => {
   return Array.isArray(id) ? id[0] : id
 })
 
+type ListPriceRow = {
+  id?: number
+  price: string
+  titles: Record<string, string>
+}
+
+const DEFAULT_LIST_PRICE_TITLE_KEYS = [
+  'title_ru',
+  'title_en',
+  'title_kk',
+  'title_ch',
+  'title_az',
+] as const
+
+const listPriceRows = ref<ListPriceRow[]>([])
+
+/** Одновременно раскрыта одна позиция list_price (-1 — все свёрнуты) */
+const openListPriceAccordionIndex = ref<number>(0)
+
+function isListPriceAccordionOpen(idx: number): boolean {
+  return openListPriceAccordionIndex.value === idx
+}
+
+function toggleListPriceAccordion(idx: number): void {
+  openListPriceAccordionIndex.value =
+    openListPriceAccordionIndex.value === idx ? -1 : idx
+}
+
+function listPriceRowSummary(row: ListPriceRow): string {
+  const title =
+    row.titles['title_ru']?.trim() ||
+    Object.values(row.titles).find(v => String(v).trim()) ||
+    ''
+  const price = String(row.price ?? '').trim()
+  if (title && price) return `${title} · ${price}`
+  if (title) return title
+  if (price) return price
+  return ''
+}
+
+function sortListPriceTitleKeys(keys: string[]): string[] {
+  return [...keys].sort((a, b) => {
+    const la = a.replace(/^title_/i, '')
+    const lb = b.replace(/^title_/i, '')
+    if (la === 'ru') return -1
+    if (lb === 'ru') return 1
+    return la.localeCompare(lb)
+  })
+}
+
+function collectListPriceTitleKeys(
+  productData: Product | null,
+  rows: ListPriceRow[]
+): string[] {
+  const keys = new Set<string>([...DEFAULT_LIST_PRICE_TITLE_KEYS])
+  const raw = productData?.list_price
+  if (Array.isArray(raw)) {
+    for (const item of raw as Record<string, unknown>[]) {
+      if (item && typeof item === 'object') {
+        for (const k of Object.keys(item)) {
+          if (k.startsWith('title_')) keys.add(k)
+        }
+      }
+    }
+  }
+  for (const row of rows) {
+    for (const k of Object.keys(row.titles)) {
+      if (k.startsWith('title_')) keys.add(k)
+    }
+  }
+  return sortListPriceTitleKeys([...keys])
+}
+
+const listPriceTitleKeys = computed(() =>
+  collectListPriceTitleKeys(product.value, listPriceRows.value)
+)
+
+function normalizeListPriceRows(data: Product): ListPriceRow[] {
+  const raw = data.list_price
+  const keys = collectListPriceTitleKeys(data, [])
+  if (!Array.isArray(raw) || raw.length === 0) return []
+  return raw.map((item: Record<string, unknown>) => ({
+    id: typeof item.id === 'number' ? item.id : undefined,
+    price: String(item.price ?? ''),
+    titles: keys.reduce(
+      (acc, k) => {
+        acc[k] = String(item[k] ?? '')
+        return acc
+      },
+      {} as Record<string, string>
+    ),
+  }))
+}
+
+function titleKeyLanguageLabel(key: string): string {
+  return key.replace(/^title_/i, '').toUpperCase()
+}
+
+function addListPriceRow() {
+  const keys = listPriceTitleKeys.value
+  const titles: Record<string, string> = {}
+  keys.forEach(k => {
+    titles[k] = ''
+  })
+  listPriceRows.value = [...listPriceRows.value, { price: '', titles }]
+  openListPriceAccordionIndex.value = listPriceRows.value.length - 1
+}
+
+function removeListPriceRow(index: number) {
+  const open = openListPriceAccordionIndex.value
+  listPriceRows.value = listPriceRows.value.filter((_, i) => i !== index)
+  const newLen = listPriceRows.value.length
+  if (newLen === 0) {
+    openListPriceAccordionIndex.value = -1
+  } else if (open === index) {
+    openListPriceAccordionIndex.value = Math.min(index, newLen - 1)
+  } else if (open > index) {
+    openListPriceAccordionIndex.value = open - 1
+  }
+}
+
+function buildListPricePayload(): Record<string, unknown>[] {
+  const keys = listPriceTitleKeys.value
+  return listPriceRows.value
+    .map(row => {
+      const priceNum = parseFloat(String(row.price).replace(',', '.'))
+      const payload: Record<string, unknown> = {
+        price: Number.isFinite(priceNum) ? priceNum : 0,
+      }
+      keys.forEach(k => {
+        payload[k] = row.titles[k] ?? ''
+      })
+      if (row.id != null) payload.id = row.id
+      return payload
+    })
+    .filter(payload => {
+      const priceVal = Number(payload.price)
+      const hasPrice = Number.isFinite(priceVal) && priceVal !== 0
+      const hasTitle = keys.some(
+        k => String(payload[k] ?? '').trim().length > 0
+      )
+      return hasPrice || hasTitle
+    })
+}
+
 const loadProduct = async () => {
   loading.value = true
   error.value = null
   try {
     const data = await productService.getById(productId.value as string)
     product.value = data
+    listPriceRows.value = normalizeListPriceRows(data)
+    openListPriceAccordionIndex.value = listPriceRows.value.length > 0 ? 0 : -1
 
     // Очищаем formData
     Object.keys(formData).forEach(key => {
@@ -553,6 +811,8 @@ const handleSubmit = async () => {
         updateData[field.key] = formData[field.key]
       }
     })
+
+    updateData.list_price = buildListPricePayload()
 
     // Если категория - это объект, используем его ID
     if (product.value.category && typeof product.value.category === 'object') {
