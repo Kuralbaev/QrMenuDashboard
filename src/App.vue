@@ -28,7 +28,7 @@ const languages = [
 const currentLocale = ref(locale.value)
 
 // Синхронизируем изменения локали
-watch(locale, (newLocale) => {
+watch(locale, newLocale => {
   currentLocale.value = newLocale
 })
 
@@ -43,8 +43,18 @@ const changeLocale = (event: Event) => {
 
 const navItems = [
   { path: '/', name: 'Home', label: 'navbar.home', icon: Home },
-  { path: '/products', name: 'Products', label: 'navbar.menu', icon: UtensilsCrossed },
-  { path: '/reviews', name: 'Reviews', label: 'navbar.reviews', icon: MessageSquare },
+  {
+    path: '/products',
+    name: 'Products',
+    label: 'navbar.menu',
+    icon: UtensilsCrossed,
+  },
+  {
+    path: '/reviews',
+    name: 'Reviews',
+    label: 'navbar.reviews',
+    icon: MessageSquare,
+  },
 ]
 
 const isActive = (path: string) => {
@@ -54,7 +64,6 @@ const isActive = (path: string) => {
   return route.path.startsWith(path)
 }
 
-
 const logout = () => {
   authStore.logout()
   router.push('/login')
@@ -63,15 +72,17 @@ const logout = () => {
 // Вычисляемые стили для Telegram темы
 const telegramStyles = computed(() => {
   if (!isTelegram.value || !themeParams.value) return {}
-  
+
   return {
     '--tg-theme-bg-color': themeParams.value.bg_color || '#ffffff',
     '--tg-theme-text-color': themeParams.value.text_color || '#000000',
     '--tg-theme-hint-color': themeParams.value.hint_color || '#999999',
     '--tg-theme-link-color': themeParams.value.link_color || '#2481cc',
     '--tg-theme-button-color': themeParams.value.button_color || '#2481cc',
-    '--tg-theme-button-text-color': themeParams.value.button_text_color || '#ffffff',
-    '--tg-theme-secondary-bg-color': themeParams.value.secondary_bg_color || '#f1f1f1',
+    '--tg-theme-button-text-color':
+      themeParams.value.button_text_color || '#ffffff',
+    '--tg-theme-secondary-bg-color':
+      themeParams.value.secondary_bg_color || '#f1f1f1',
   }
 })
 
@@ -82,7 +93,7 @@ const loadInitialData = async () => {
     try {
       await Promise.all([
         restaurantStore.fetchRestaurants(),
-        productStore.fetchProducts()
+        productStore.fetchProducts(),
       ])
     } catch (error) {
       console.error('Ошибка при загрузке начальных данных:', error)
@@ -90,6 +101,7 @@ const loadInitialData = async () => {
       initialLoading.value = false
     }
   } else {
+    router.push('/login')
     initialLoading.value = false
   }
 }
@@ -101,27 +113,30 @@ onMounted(async () => {
       document.documentElement.style.setProperty(key, value as string)
     })
   }
-  
+
   await loadInitialData()
 })
 
 // Отслеживаем изменения маршрута для загрузки данных при переходе с логина
-watch(() => route.path, async (newPath) => {
-  if (newPath !== '/login' && authStore.isAuthenticated) {
-    // Если данные еще не загружены, загружаем их
-    if (!restaurantStore.restaurant || productStore.products.length === 0) {
-      await loadInitialData()
+watch(
+  () => route.path,
+  async newPath => {
+    if (newPath !== '/login' && authStore.isAuthenticated) {
+      // Если данные еще не загружены, загружаем их
+      if (!restaurantStore.restaurant || productStore.products.length === 0) {
+        await loadInitialData()
+      }
     }
   }
-})
+)
 </script>
 
 <template>
-  <div 
+  <div
     class="min-h-screen"
     :class="[
       isTelegram ? 'pb-16' : 'pb-16',
-      isTelegram && themeParams?.bg_color ? '' : 'bg-background'
+      isTelegram && themeParams?.bg_color ? '' : 'bg-background',
     ]"
     :style="telegramStyles"
   >
@@ -137,31 +152,44 @@ watch(() => route.path, async (newPath) => {
         </option>
       </select>
       <!-- exit button -->
-      <button @click="logout" v-if="authStore.isAuthenticated" class="text-sm ml-2 text-red-500 hover:text-red-700 border border-red-200 rounded-md p-1 h-8 w-8 flex items-center justify-center">
+      <button
+        @click="logout"
+        v-if="authStore.isAuthenticated"
+        class="text-sm ml-2 text-red-500 hover:text-red-700 border border-red-200 rounded-md p-1 h-8 w-8 flex items-center justify-center"
+      >
         <LogOut class="w-4 h-4 text-red-500" />
       </button>
     </div>
-    
+
     <!-- Лоадер начальной загрузки -->
-    <div v-if="initialLoading && route.path !== '/login'" class="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm">
+    <div
+      v-if="initialLoading && route.path !== '/login'"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm"
+    >
       <div class="flex flex-col items-center gap-4">
-        <div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+        <div
+          class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"
+        ></div>
         <p class="text-sm text-gray-600">{{ t('common.loading') }}</p>
       </div>
     </div>
-    
+
     <router-view v-if="!initialLoading || route.path === '/login'" />
-    
+
     <!-- Нижняя навигация -->
-    <nav 
-      v-if="route.path !== '/login'" 
+    <nav
+      v-if="route.path !== '/login'"
       class="fixed bottom-0 left-0 right-0 z-50 safe-area-inset-bottom"
       :class="[
-        isTelegram && themeParams?.secondary_bg_color 
-          ? '' 
-          : 'bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]'
+        isTelegram && themeParams?.secondary_bg_color
+          ? ''
+          : 'bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]',
       ]"
-      :style="isTelegram && themeParams?.secondary_bg_color ? { backgroundColor: themeParams.secondary_bg_color } : {}"
+      :style="
+        isTelegram && themeParams?.secondary_bg_color
+          ? { backgroundColor: themeParams.secondary_bg_color }
+          : {}
+      "
     >
       <div class="flex justify-around items-center h-16 px-2">
         <router-link
@@ -171,16 +199,21 @@ watch(() => route.path, async (newPath) => {
           :class="[
             'h-full rounded-lg transition-all duration-200 relative',
             isActive(item.path)
-              ? isTelegram && themeParams?.link_color 
-                ? '' 
+              ? isTelegram && themeParams?.link_color
+                ? ''
                 : 'text-primary'
               : isTelegram && themeParams?.hint_color
                 ? ''
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-gray-500 hover:text-gray-700',
           ]"
-          :style="isActive(item.path) 
-            ? isTelegram && themeParams?.link_color ? { color: themeParams.link_color } : {}
-            : isTelegram && themeParams?.hint_color ? { color: themeParams.hint_color } : {}
+          :style="
+            isActive(item.path)
+              ? isTelegram && themeParams?.link_color
+                ? { color: themeParams.link_color }
+                : {}
+              : isTelegram && themeParams?.hint_color
+                ? { color: themeParams.hint_color }
+                : {}
           "
         >
           <!-- Активный индикатор -->
@@ -188,24 +221,28 @@ watch(() => route.path, async (newPath) => {
             v-if="isActive(item.path)"
             class="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 rounded-b-full"
             :class="isTelegram && themeParams?.link_color ? '' : 'bg-primary'"
-            :style="isTelegram && themeParams?.link_color ? { backgroundColor: themeParams.link_color } : {}"
+            :style="
+              isTelegram && themeParams?.link_color
+                ? { backgroundColor: themeParams.link_color }
+                : {}
+            "
           />
-          
+
           <!-- Иконка -->
           <component
             :is="item.icon"
             :class="[
               'w-4 h-4 transition-transform duration-200 m-auto mt-3 mb-0',
-              isActive(item.path) ? 'scale-110' : 'group-hover:scale-105'
+              isActive(item.path) ? 'scale-110' : 'group-hover:scale-105',
             ]"
             :stroke-width="isActive(item.path) ? 2.5 : 2"
           />
-          
+
           <!-- Текст -->
           <p
             :class="[
               'text-[10px] font-medium transition-all duration-200',
-              isActive(item.path) ? 'font-semibold' : ''
+              isActive(item.path) ? 'font-semibold' : '',
             ]"
           >
             {{ t(item.label) }}
