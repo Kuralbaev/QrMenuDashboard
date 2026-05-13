@@ -2,7 +2,11 @@
   <div class="flex min-h-screen items-center justify-center bg-background p-6">
     <div class="w-full max-w-md space-y-10">
       <div class="text-center space-y-2">
-        <img src="../assets/images/logo_black.png" alt="logo" class="h-16 mx-auto">
+        <img
+          src="../assets/images/logo_black.png"
+          alt="logo"
+          class="h-16 mx-auto"
+        />
       </div>
 
       <form @submit.prevent="handleSubmit" class="space-y-4">
@@ -64,8 +68,8 @@ import { Label } from '../components/ui/label'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const email = ref('qonaq_restaurant@luniq.net')
-const password = ref('Pqx3rFsEyX')
+const email = ref('')
+const password = ref('')
 const isLoading = ref(false)
 const errors = ref<{
   email?: string
@@ -96,10 +100,10 @@ const validatePassword = (value: string): string | undefined => {
 
 const handleSubmit = async () => {
   errors.value = {}
-  
+
   const emailError = validateEmail(email.value)
   const passwordError = validatePassword(password.value)
-  
+
   if (emailError || passwordError) {
     errors.value = {
       email: emailError,
@@ -107,18 +111,19 @@ const handleSubmit = async () => {
     }
     return
   }
-  
+
   isLoading.value = true
   errors.value = {}
-  
+
   try {
     await authStore.login(email.value, password.value)
     // Редиректим на сохраненный путь или на главную
-    const redirect = router.currentRoute.value.query.redirect as string || '/'
+    const redirect = (router.currentRoute.value.query.redirect as string) || '/'
     router.push(redirect)
   } catch (error: any) {
     errors.value.general =
-      error?.response?.data?.message || 'Ошибка входа. Проверьте свои учетные данные.'
+      error?.response?.data?.message ||
+      'Ошибка входа. Проверьте свои учетные данные.'
   } finally {
     isLoading.value = false
   }
