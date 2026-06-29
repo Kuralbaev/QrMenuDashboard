@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(config => {
   // Добавляем Bearer token из auth store
   const authStore = useAuthStore()
-  if (authStore.token && !config.url?.includes('restaurant-comments')) {
+  if (authStore.token && !config.url?.includes('restaurant-comments') && !config.url?.includes('order-statistics')) {
     config.headers.Authorization = `Bearer ${authStore.token}`
   }
   return config

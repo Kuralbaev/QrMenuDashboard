@@ -17,6 +17,10 @@ app.use(router)
 app.use(pinia)
 app.use(i18n)
 
+router.afterEach(to => {
+  trackPageView(to.fullPath + (to.hash || ''))
+})
+
 // Инициализируем auth store для восстановления состояния авторизации
 const authStore = useAuthStore()
 authStore.init()

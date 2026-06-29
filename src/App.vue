@@ -133,32 +133,55 @@ watch(
 
 <template>
   <div
-    class="min-h-screen"
-    :class="[
-      isTelegram ? 'pb-16' : 'pb-16',
-      isTelegram && themeParams?.bg_color ? '' : 'bg-background',
-    ]"
+    class="min-h-screen bg-gradient-to-b from-muted/40 to-background"
+    :class="isTelegram ? 'pb-16' : 'pb-16'"
     :style="telegramStyles"
   >
-    <!-- Переключатель языка (скрываем в Telegram Mini App) -->
-    <div class="p-2 flex justify-end pr-4 -mb-14">
+    <!-- Верхняя панель -->
+    <header
+      v-if="route.path !== '/login'"
+      class="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md"
+    >
+      <div class="mx-auto flex max-w-lg items-center justify-between gap-2 px-4 py-2.5 md:max-w-2xl">
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-sm font-semibold text-foreground">
+            {{ restaurantStore.restaurant?.title_ru || 'LUNIQ Dashboard' }}
+          </p>
+        </div>
+        <div class="flex shrink-0 items-center gap-1.5">
+          <select
+            :value="currentLocale"
+            @change="changeLocale"
+            class="h-8 rounded-lg border border-border bg-card px-2 text-xs font-medium text-foreground shadow-sm"
+          >
+            <option v-for="lang in languages" :key="lang.code" :value="lang.code">
+              {{ lang.label }}
+            </option>
+          </select>
+          <button
+            v-if="authStore.isAuthenticated"
+            type="button"
+            @click="logout"
+            class="flex h-8 w-8 items-center justify-center rounded-lg border border-destructive/20 bg-destructive/5 text-destructive transition hover:bg-destructive/10"
+            :aria-label="t('common.back')"
+          >
+            <LogOut class="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Переключатель языка на логине -->
+    <div v-else class="absolute right-4 top-4 z-10">
       <select
         :value="currentLocale"
         @change="changeLocale"
-        class="flex rounded-md border border-input bg-white h-8 px-1 text-xs shadow-xs transition-all focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring cursor-pointer"
+        class="h-8 rounded-lg border border-border bg-card px-2 text-xs"
       >
         <option v-for="lang in languages" :key="lang.code" :value="lang.code">
           {{ lang.label }}
         </option>
       </select>
-      <!-- exit button -->
-      <button
-        @click="logout"
-        v-if="authStore.isAuthenticated"
-        class="text-sm ml-2 text-red-500 hover:text-red-700 border border-red-200 rounded-md p-1 h-8 w-8 flex items-center justify-center"
-      >
-        <LogOut class="w-4 h-4 text-red-500" />
-      </button>
     </div>
 
     <!-- Лоадер начальной загрузки -->
@@ -179,74 +202,40 @@ watch(
     <!-- Нижняя навигация -->
     <nav
       v-if="route.path !== '/login'"
-      class="fixed bottom-0 left-0 right-0 z-50 safe-area-inset-bottom"
-      :class="[
-        isTelegram && themeParams?.secondary_bg_color
-          ? ''
-          : 'bg-white border-t border-gray-200 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]',
-      ]"
+      class="fixed bottom-0 left-0 right-0 z-50 safe-area-inset-bottom border-t border-border/60 bg-background/95 backdrop-blur-md"
       :style="
         isTelegram && themeParams?.secondary_bg_color
           ? { backgroundColor: themeParams.secondary_bg_color }
           : {}
       "
     >
-      <div class="flex justify-around items-center h-16 px-2">
+      <div class="mx-auto flex h-[4.25rem] max-w-lg items-stretch justify-around px-2 md:max-w-2xl">
         <router-link
           v-for="item in navItems"
           :key="item.path"
           :to="item.path"
-          :class="[
-            'h-full rounded-lg transition-all duration-200 relative',
+          class="group relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl transition-colors"
+          :class="
             isActive(item.path)
-              ? isTelegram && themeParams?.link_color
-                ? ''
-                : 'text-primary'
-              : isTelegram && themeParams?.hint_color
-                ? ''
-                : 'text-gray-500 hover:text-gray-700',
-          ]"
-          :style="
-            isActive(item.path)
-              ? isTelegram && themeParams?.link_color
-                ? { color: themeParams.link_color }
-                : {}
-              : isTelegram && themeParams?.hint_color
-                ? { color: themeParams.hint_color }
-                : {}
+              ? 'text-primary'
+              : 'text-muted-foreground hover:text-foreground'
           "
         >
-          <!-- Активный индикатор -->
           <div
             v-if="isActive(item.path)"
-            class="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 rounded-b-full"
-            :class="isTelegram && themeParams?.link_color ? '' : 'bg-primary'"
-            :style="
-              isTelegram && themeParams?.link_color
-                ? { backgroundColor: themeParams.link_color }
-                : {}
-            "
+            class="absolute inset-x-3 top-1 h-0.5 rounded-full bg-primary"
           />
-
-          <!-- Иконка -->
           <component
             :is="item.icon"
-            :class="[
-              'w-4 h-4 transition-transform duration-200 m-auto mt-3 mb-0',
-              isActive(item.path) ? 'scale-110' : 'group-hover:scale-105',
-            ]"
+            class="h-5 w-5 transition-transform group-active:scale-95"
             :stroke-width="isActive(item.path) ? 2.5 : 2"
           />
-
-          <!-- Текст -->
-          <p
-            :class="[
-              'text-[10px] font-medium transition-all duration-200',
-              isActive(item.path) ? 'font-semibold' : '',
-            ]"
+          <span
+            class="text-[10px] font-medium"
+            :class="isActive(item.path) ? 'font-semibold' : ''"
           >
             {{ t(item.label) }}
-          </p>
+          </span>
         </router-link>
       </div>
     </nav>

@@ -23,5 +23,20 @@ export default defineConfig({
     hmr: {
       clientPort: 443, // Используйте порт 443 для HTTPS туннелей
     },
+    proxy: {
+      '/api/analytics': {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: true,
+      },
+      '/api/analytics-data': {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: true,
+      },
+      '/api/ga-summary': {
+        target: 'http://127.0.0.1:8787',
+        changeOrigin: true,
+        rewrite: p => p.replace(/^\/api\/ga-summary/, '/ga-summary'),
+      },
+    },
   },
 })

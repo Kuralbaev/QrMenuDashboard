@@ -14,7 +14,16 @@
     "home": {
       "title": "Маанилүү маалымат",
       "mobileInfo": "<b>LUNIQ Dashboard</b> мобилдик версиясында учурдагы менюну өзгөртүүгө жана пикирлерди көрүүгө болот. Жаңы категорияларды кошуу, жаңы тамактарды нөлдөн баштап түзүү же дизайнды жөндөө үчүн Толук версияны (Desktop) колдонуңуз. Жеке кабинетке шилтемени сизге LUNIQ менеджери жөнөткөн.",
-      "dishesCount": "Тамактардын саны"
+      "dishesCount": "Тамактардын саны",
+      "analyticsTitle": "Сайт аналитикасы",
+      "analyticsLoading": "Көрсөткүчтөр жүктөлүүдө...",
+      "analyticsError": "Аналитика маалыматын жүктөө мүмкүн болбоду",
+      "analyticsPeriod": "Мөөнөт: {period}",
+      "analyticsActiveUsers": "Активдүү колдонуучулар",
+      "analyticsSessions": "Сессиялар",
+      "analyticsPageViews": "Көрүүлөр",
+      "analyticsTrackingNote": "Google Analytics иштетилген. VITE_GA_EMBED_REPORT_URL же GA4 Data API үчүн VITE_GA_SUMMARY_API_PATH колдонуңуз.",
+      "analyticsNoData": "Сервер жообунда көрсөткүчтөр жок."
     },
     "products": {
       "title": "Продуктулардын тизмеси",

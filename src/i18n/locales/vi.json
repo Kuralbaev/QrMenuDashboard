@@ -14,7 +14,16 @@
     "home": {
       "title": "Thông tin quan trọng",
       "mobileInfo": "Trong phiên bản di động của <b>LUNIQ Dashboard</b>, bạn có thể chỉnh sửa menu hiện tại và xem đánh giá. Để thêm danh mục mới, tạo món ăn mới từ đầu hoặc tùy chỉnh thiết kế, vui lòng sử dụng phiên bản Đầy đủ (Desktop). Quản lý LUNIQ đã gửi link trang cá nhân cho bạn.",
-      "dishesCount": "Số lượng món ăn"
+      "dishesCount": "Số lượng món ăn",
+      "analyticsTitle": "Phân tích trang web",
+      "analyticsLoading": "Đang tải số liệu...",
+      "analyticsError": "Không tải được dữ liệu phân tích",
+      "analyticsPeriod": "Khoảng thời gian: {period}",
+      "analyticsActiveUsers": "Người dùng tích cực",
+      "analyticsSessions": "Phiên",
+      "analyticsPageViews": "Lượt xem",
+      "analyticsTrackingNote": "Google Analytics đã bật. Nhúng báo cáo qua VITE_GA_EMBED_REPORT_URL hoặc GA4 Data API qua VITE_GA_SUMMARY_API_PATH.",
+      "analyticsNoData": "Phản hồi máy chủ không có chỉ số."
     },
     "products": {
       "title": "Danh sách sản phẩm",

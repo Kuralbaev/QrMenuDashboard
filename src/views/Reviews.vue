@@ -1,23 +1,18 @@
 <template>
-  <div class="p-4 md:p-6 max-w-7xl mx-auto pb-20">
-    <!-- Заголовок -->
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 mb-2">{{ t('reviews.title') }}</h1>
-      <p v-if="total > 0" class="text-sm text-gray-500">
-        {{ t('products.found') }} {{ total }} {{ total === 1 ? t('reviews.review') : t('reviews.reviews') }}
-      </p>
-    </div>
+  <PageShell>
+    <PageHeader
+      :title="t('reviews.title')"
+      :subtitle="total > 0 ? `${total} ${total === 1 ? t('reviews.review') : t('reviews.reviews')}` : undefined"
+    />
 
-    <!-- Состояние загрузки -->
-    <div v-if="loading" class="text-center py-20">
-      <div class="inline-flex items-center gap-3 text-gray-500">
-        <div class="w-5 h-5 border-2 border-gray-300 border-t-primary rounded-full animate-spin"></div>
-        <p class="text-base">{{ t('reviews.loading') }}</p>
+    <div v-if="loading" class="flex justify-center py-16">
+      <div class="flex items-center gap-2 text-sm text-muted-foreground">
+        <span class="h-5 w-5 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+        {{ t('reviews.loading') }}
       </div>
     </div>
 
-    <!-- Список отзывов -->
-    <div v-else-if="reviews.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div v-else-if="reviews.length > 0" class="space-y-3">
       <div
         v-for="review in reviews"
         :key="review.id"
@@ -151,7 +146,7 @@
         </div>
       </Transition>
     </Teleport>
-  </div>
+  </PageShell>
 </template>
 
 <script setup lang="ts">
@@ -164,6 +159,8 @@ import { useDateTime } from '../composables/useDateTime'
 import type { Review } from '../types/api'
 import { PhoneIcon } from 'lucide-vue-next'
 import { Button } from '../components/ui/button'
+import PageShell from '../components/layout/PageShell.vue'
+import PageHeader from '../components/layout/PageHeader.vue'
 
 const { t } = useI18n()
 const { formatDate } = useDateTime()

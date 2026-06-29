@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Ключи Google Cloud (service account JSON с private_key) — только локально, не в git
+server/*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

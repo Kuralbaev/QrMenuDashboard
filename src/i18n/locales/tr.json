@@ -14,7 +14,16 @@
     "home": {
       "title": "Önemli Bilgi",
       "mobileInfo": "<b>LUNIQ Dashboard</b>'un mobil sürümünde mevcut menüyü düzenleyebilir ve yorumları görüntüleyebilirsiniz. Yeni kategoriler eklemek, sıfırdan yeni yemekler oluşturmak veya tasarımı ayarlamak için lütfen Tam sürümü (Desktop) kullanın. Kişisel panel linkiniz LUNIQ yöneticisi tarafından size gönderilmiştir.",
-      "dishesCount": "Yemek Sayısı"
+      "dishesCount": "Yemek Sayısı",
+      "analyticsTitle": "Site analitiği",
+      "analyticsLoading": "Metrikler yükleniyor...",
+      "analyticsError": "Analitik verileri yüklenemedi",
+      "analyticsPeriod": "Dönem: {period}",
+      "analyticsActiveUsers": "Etkin kullanıcılar",
+      "analyticsSessions": "Oturumlar",
+      "analyticsPageViews": "Sayfa görüntülemeleri",
+      "analyticsTrackingNote": "Google Analytics etkin. Rapor için VITE_GA_EMBED_REPORT_URL veya GA4 Data API için VITE_GA_SUMMARY_API_PATH kullanın.",
+      "analyticsNoData": "Sunucu yanıtında metrik yok."
     },
     "products": {
       "title": "Ürün Listesi",

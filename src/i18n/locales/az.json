@@ -14,7 +14,16 @@
     "home": {
       "title": "Vacib məlumat",
       "mobileInfo": "<b>LUNIQ Dashboard</b>-un mobil versiyasında mövcud menyunu redaktə edə və rəylərə baxa bilərsiniz. Yeni kateqoriyalar əlavə etmək, sıfırdan yeni yeməklər yaratmaq və ya dizaynı tənzimləmək üçün zəhmət olmasa Tam versiyadan (Desktop) istifadə edin. Şəxsi kabinetə keçid linki LUNIQ meneceri tərəfindən sizə göndərilib.",
-      "dishesCount": "Yeməklərin sayı"
+      "dishesCount": "Yeməklərin sayı",
+      "analyticsTitle": "Sayt analitikası",
+      "analyticsLoading": "Göstəricilər yüklənir...",
+      "analyticsError": "Analitika məlumatı yüklənmədi",
+      "analyticsPeriod": "Müddət: {period}",
+      "analyticsActiveUsers": "Aktiv istifadəçilər",
+      "analyticsSessions": "Sessiyalar",
+      "analyticsPageViews": "Səhifə baxışları",
+      "analyticsTrackingNote": "Google Analytics aktivdir. Hesabat üçün VITE_GA_EMBED_REPORT_URL və ya GA4 Data API üçün VITE_GA_SUMMARY_API_PATH istifadə edin.",
+      "analyticsNoData": "Server cavabında göstərici yoxdur."
     },
     "products": {
       "title": "Məhsul siyahısı",

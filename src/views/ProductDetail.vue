@@ -1,18 +1,11 @@
 <template>
-  <div class="p-4 md:p-6 max-w-4xl mx-auto pb-10">
-    <!-- Заголовок -->
-    <div class="mb-6">
-      <div class="flex gap-4 mb-4">
-        <Button
-          variant="outline"
-          @click="goBack"
-          class="h-8 w-8 flex items-center justify-center"
-        >
-          <ArrowLeft class="w-4 h-4 text-gray-700" />
-        </Button>
-      </div>
+  <PageShell>
+    <div class="mb-4 flex items-center gap-3">
+      <Button variant="outline" class="h-9 w-9 shrink-0 rounded-xl p-0" @click="goBack">
+        <ArrowLeft class="h-4 w-4" />
+      </Button>
+      <h1 class="min-w-0 truncate text-lg font-bold">{{ product?.[`title_${locale}`] }}</h1>
     </div>
-    <h1 class="text-lg font-bold mb-4">{{ product?.[`title_${locale}`] }}</h1>
 
     <!-- Состояние загрузки -->
     <div v-if="loading" class="text-center py-12">
@@ -484,7 +477,7 @@
         {{ t('product.backToList') }}
       </Button>
     </div>
-  </div>
+  </PageShell>
 </template>
 
 <script setup lang="ts">
@@ -493,6 +486,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
+import PageShell from '../components/layout/PageShell.vue'
 import { useProductService } from '../services/productService'
 import { useDateTime } from '../composables/useDateTime'
 import { useI18n } from 'vue-i18n'

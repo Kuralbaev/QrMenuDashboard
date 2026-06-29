@@ -14,7 +14,16 @@
     "home": {
       "title": "重要信息",
       "mobileInfo": "在 <b>LUNIQ Dashboard</b> 移动端版本中，您可以编辑当前菜单并查看评论。如需添加新类别、从头开始创建新菜品或设置设计，请使用完整版 (Desktop)。经理已通过 LUNIQ 向您发送了个人账户链接。",
-      "dishesCount": "菜品数量"
+      "dishesCount": "菜品数量",
+      "analyticsTitle": "网站分析",
+      "analyticsLoading": "正在加载指标...",
+      "analyticsError": "无法加载分析数据",
+      "analyticsPeriod": "时间段：{period}",
+      "analyticsActiveUsers": "活跃用户",
+      "analyticsSessions": "会话",
+      "analyticsPageViews": "浏览量",
+      "analyticsTrackingNote": "已启用 Google Analytics。可通过 VITE_GA_EMBED_REPORT_URL 嵌入报告，或通过 VITE_GA_SUMMARY_API_PATH 使用 GA4 Data API 聚合数据。",
+      "analyticsNoData": "服务器响应中没有指标数据。"
     },
     "products": {
       "title": "产品列表",

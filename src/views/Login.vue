@@ -1,12 +1,9 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-background p-6">
-    <div class="w-full max-w-md space-y-10">
-      <div class="text-center space-y-2">
-        <img
-          src="../assets/images/logo_black.png"
-          alt="logo"
-          class="h-16 mx-auto"
-        />
+  <div class="flex min-h-screen items-center justify-center bg-gradient-to-b from-muted/50 to-background p-6">
+    <div class="w-full max-w-sm space-y-8 rounded-2xl border border-border/60 bg-card p-6 shadow-lg">
+      <div class="text-center">
+        <img src="../assets/images/logo_black.png" alt="logo" class="mx-auto h-14" />
+        <p class="mt-3 text-sm text-muted-foreground">LUNIQ Dashboard</p>
       </div>
 
       <form @submit.prevent="handleSubmit" class="space-y-4">
@@ -48,7 +45,7 @@
           {{ errors.general }}
         </p>
 
-        <Button type="submit" class="w-full" :disabled="isLoading">
+        <Button type="submit" class="h-11 w-full rounded-xl" :disabled="isLoading">
           <span v-if="!isLoading">Войти</span>
           <span v-else>Вход...</span>
         </Button>
