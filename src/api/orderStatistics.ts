@@ -68,11 +68,12 @@ function dayOrderCount(bucket: OrderStatDayBucket): number {
 /** Топ блюд — GET /api/order-statistics?start=…&end=… → { data: { "2026-06-09": { count, …блюда } }, total } */
 export async function fetchTopDishesStats(
   range: StatsDateRange,
-  locale: string
+  locale: string,
+  restoranId: number
 ): Promise<StatsBlock> {
   const { data: raw } = await axiosInstance.get<OrderStatisticsApiResponse | OrderStatisticsByDate>(
     '/api/order-statistics',
-    { params: { start: range.start, end: range.end } }
+    { params: { start: range.start, end: range.end, restoran: restoranId } }
   )
 
   const { buckets, total: apiTotal } = parsePayload(raw)
@@ -116,18 +117,60 @@ export async function fetchTopDishesStats(
   }
 }
 
-export type OrderCountType = 'whatsapp' | 'waiter'
+export type OrderCountType = 'whatsapp' | 'qr'
 
 export interface OrderCountApiResponse {
   data: Record<string, number>
   total: number
 }
 
+function mapCountByDateResponse(
+  data: OrderCountApiResponse,
+  metric: string,
+  period: string
+): StatsBlock {
+  const rows = Object.entries(data.data ?? {})
+    .map(([label, value]) => ({ label, value: Number(value) }))
+    .sort((a, b) => a.label.localeCompare(b.label))
+
+  const total =
+    typeof data.total === 'number' ? data.total : rows.reduce((s, r) => s + r.value, 0)
+
+  return { rows, dailyRows: rows, total, period, metric }
+}
+
+/** Посещения — GET /api/order-statistics/visit-count?restoran=… */
+export async function fetchVisitCountStats(
+  restoranId: number,
+  groupBy: 'day' | 'month' | 'year',
+  range: StatsDateRange,
+): Promise<StatsBlock> {
+  const { data } = await axiosInstance.get<OrderCountApiResponse>(
+    '/api/order-statistics/visit-count',
+    {
+      params: {
+        restoran: restoranId,
+        groupBy,
+        start: range.start,
+        end: range.end,
+        restoran: restoranId,
+      },
+    }
+  )
+
+  return mapCountByDateResponse(
+    data,
+    'visits',
+    `${groupBy}_${range.start}_${range.end}`
+  )
+}
+
 /** WhatsApp / QR-заказы — GET /api/order-statistics/order-count */
 export async function fetchOrderCountStats(
   type: OrderCountType,
   groupBy: 'day' | 'month' | 'year',
-  range: StatsDateRange
+  range: StatsDateRange,
+  restoranId: number
 ): Promise<StatsBlock> {
   const { data } = await axiosInstance.get<OrderCountApiResponse>(
     '/api/order-statistics/order-count',
@@ -137,21 +180,14 @@ export async function fetchOrderCountStats(
         start: range.start,
         end: range.end,
         type,
+        restoran: restoranId,
       },
     }
   )
 
-  const rows = Object.entries(data.data ?? {})
-    .map(([label, value]) => ({ label, value: Number(value) }))
-    .sort((a, b) => a.label.localeCompare(b.label))
-
-  const total = typeof data.total === 'number' ? data.total : rows.reduce((s, r) => s + r.value, 0)
-
-  return {
-    rows,
-    dailyRows: rows,
-    total,
-    period: `${groupBy}_${range.start}_${range.end}`,
-    metric: type === 'whatsapp' ? 'whatsapp' : 'qr',
-  }
+  return mapCountByDateResponse(
+    data,
+    type === 'whatsapp' ? 'whatsapp' : 'orders',
+    `${groupBy}_${range.start}_${range.end}`
+  )
 }

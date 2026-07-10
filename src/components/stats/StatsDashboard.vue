@@ -14,8 +14,12 @@ import {
   type StatsGroupBy,
 } from '../../api/analytics'
 import ChartLine from './ChartLine.vue'
+import { useRestaurantStore } from '../../store/restaurantStore'
+import { storeToRefs } from 'pinia'
 
 const { t, locale } = useI18n()
+const restaurantStore = useRestaurantStore()
+const { restaurant } = storeToRefs(restaurantStore)
 
 type StatTab = StatsMetric
 
@@ -25,10 +29,30 @@ const statTabs: {
   hint: string
   icon: typeof Eye
 }[] = [
-  { id: 'visits', label: 'home.statsVisits', hint: 'home.statsVisitsHint', icon: Eye },
-  { id: 'topDishes', label: 'home.statsTopDishes', hint: 'home.statsTopDishesHint', icon: UtensilsCrossed },
-  { id: 'whatsapp', label: 'home.statsWhatsapp', hint: 'home.statsWhatsappHint', icon: MessageCircle },
-  { id: 'orders', label: 'home.statsOrders', hint: 'home.statsOrdersHint', icon: QrCode },
+  {
+    id: 'visits',
+    label: 'home.statsVisits',
+    hint: 'home.statsVisitsHint',
+    icon: Eye,
+  },
+  {
+    id: 'topDishes',
+    label: 'home.statsTopDishes',
+    hint: 'home.statsTopDishesHint',
+    icon: UtensilsCrossed,
+  },
+  {
+    id: 'whatsapp',
+    label: 'home.statsWhatsapp',
+    hint: 'home.statsWhatsappHint',
+    icon: MessageCircle,
+  },
+  {
+    id: 'orders',
+    label: 'home.statsOrders',
+    hint: 'home.statsOrdersHint',
+    icon: QrCode,
+  },
 ]
 
 const groupByOptions: StatsGroupBy[] = ['day', 'month', 'year']
@@ -50,14 +74,20 @@ const data = ref<StatsBlock | null>(null)
 const cache = new Map<string, StatsBlock>()
 
 const usesGroupBy = computed(
-  () => activeStat.value === 'whatsapp' || activeStat.value === 'orders'
+  () =>
+    activeStat.value === 'visits' ||
+    activeStat.value === 'whatsapp' ||
+    activeStat.value === 'orders'
 )
+
+const needsRestoran = computed(() => activeStat.value === 'visits')
 
 const dateRangeInvalid = computed(() => startDate.value > endDate.value)
 
 const cacheKey = computed(() => {
   const gb = usesGroupBy.value ? groupBy.value : ''
-  return `${activeStat.value}:${startDate.value}:${endDate.value}:${gb}`
+  const rid = needsRestoran.value ? String(restaurant.value?.id ?? '') : ''
+  return `${activeStat.value}:${startDate.value}:${endDate.value}:${gb}:${rid}`
 })
 
 const formatLabel = (label: string) => {
@@ -65,10 +95,17 @@ const formatLabel = (label: string) => {
   return formatDateRangeLabel(label)
 }
 
-const chartRows = computed(() => data.value?.dailyRows ?? data.value?.rows ?? [])
+const chartRows = computed(
+  () => data.value?.dailyRows ?? data.value?.rows ?? []
+)
 
 const load = async () => {
   if (dateRangeInvalid.value) return
+  if (needsRestoran.value && !restaurant.value?.id) {
+    error.value = true
+    data.value = null
+    return
+  }
 
   const key = cacheKey.value
   if (cache.has(key)) {
@@ -84,7 +121,8 @@ const load = async () => {
       activeStat.value,
       { start: startDate.value, end: endDate.value },
       locale.value,
-      groupBy.value
+      groupBy.value,
+      restaurant.value?.id ?? 0
     )
     cache.set(key, result)
     data.value = result
@@ -119,10 +157,15 @@ load()
         "
         @click="activeStat = tab.id"
       >
-        <component :is="tab.icon" class="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+        <component
+          :is="tab.icon"
+          class="mt-0.5 h-4 w-4 shrink-0 text-primary"
+        />
         <div class="min-w-0">
           <p class="text-xs font-semibold leading-tight">{{ t(tab.label) }}</p>
-          <p class="mt-0.5 text-[10px] text-muted-foreground">{{ t(tab.hint) }}</p>
+          <p class="mt-0.5 text-[10px] text-muted-foreground">
+            {{ t(tab.hint) }}
+          </p>
         </div>
       </button>
     </div>
@@ -184,12 +227,20 @@ load()
       </button>
     </div>
 
-    <div v-if="loading" class="flex items-center gap-2 py-8 text-sm text-muted-foreground">
-      <span class="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+    <div
+      v-if="loading"
+      class="flex items-center gap-2 py-8 text-sm text-muted-foreground"
+    >
+      <span
+        class="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary"
+      />
       {{ t('home.analyticsLoading') }}
     </div>
 
-    <p v-else-if="error" class="rounded-xl bg-destructive/10 px-3 py-2.5 text-sm text-destructive">
+    <p
+      v-else-if="error"
+      class="rounded-xl bg-destructive/10 px-3 py-2.5 text-sm text-destructive"
+    >
       {{ t('home.analyticsError') }}
     </p>
 

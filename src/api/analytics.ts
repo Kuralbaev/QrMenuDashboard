@@ -28,8 +28,6 @@ export interface StatsDateRange {
 
 export type StatsGroupBy = 'day' | 'month' | 'year'
 
-const gaBase = import.meta.env.VITE_GA_STATS_URL?.trim() || '/api/analytics/stats'
-
 export function formatLocalDate(d: Date): string {
   const y = d.getFullYear()
   const m = String(d.getMonth() + 1).padStart(2, '0')
@@ -48,37 +46,27 @@ export async function fetchStats(
   metric: StatsMetric,
   range: StatsDateRange,
   locale = 'ru',
-  groupBy: StatsGroupBy = 'day'
+  groupBy: StatsGroupBy = 'day',
+  restoranId: number
 ): Promise<StatsBlock> {
   if (metric === 'topDishes') {
     const { fetchTopDishesStats } = await import('./orderStatistics')
-    return fetchTopDishesStats(range, locale)
+    return fetchTopDishesStats(range, locale, restoranId)
+  }
+
+  const { fetchVisitCountStats, fetchOrderCountStats } = await import('./orderStatistics')
+
+  if (metric === 'visits') {
+    if (!restoranId) throw new Error('restoran_required')
+    return fetchVisitCountStats(restoranId, groupBy, range)
   }
 
   if (metric === 'whatsapp' || metric === 'orders') {
-    const { fetchOrderCountStats } = await import('./orderStatistics')
     const type = metric === 'whatsapp' ? 'whatsapp' : 'qr'
-    return fetchOrderCountStats(type, groupBy, range)
+    return fetchOrderCountStats(type, groupBy, range, restoranId)
   }
 
-  const params = new URLSearchParams({
-    metric,
-    start: range.start,
-    end: range.end,
-  })
-  const res = await fetch(`${gaBase}?${params}`)
-  if (!res.ok) throw new Error(`stats ${res.status}`)
-  const json = (await res.json()) as StatsResponse
-  if (!json.success || !json.data) throw new Error(json.error || 'stats_failed')
-  const block = json.data
-  return {
-    ...block,
-    dailyRows: sortByDateLabel(block.dailyRows ?? block.rows),
-  }
-}
-
-function sortByDateLabel(rows: StatsRow[]): StatsRow[] {
-  return [...rows].sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }))
+  throw new Error(`unknown_metric:${metric}`)
 }
 
 /** Формат подписи для строк по дням/месяцам/годам */
@@ -106,8 +94,7 @@ export interface AnalyticsPageRow {
 }
 
 export async function fetchAnalyticsPages(): Promise<AnalyticsPageRow[]> {
-  const data = await fetchStats('visits', defaultStatsDateRange(30))
-  return data.rows.map(r => ({ page: r.label, users: String(r.value) }))
+  return []
 }
 
 export function sumAnalyticsUsers(rows: AnalyticsPageRow[]): number {

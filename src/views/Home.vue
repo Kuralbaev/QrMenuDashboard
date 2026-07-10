@@ -30,7 +30,11 @@
           <p class="text-sm font-semibold leading-tight">{{ t(tab.label) }}</p>
           <p
             class="mt-0.5 text-[11px] leading-snug"
-            :class="activeTab === tab.id ? 'text-primary-foreground/80' : 'text-muted-foreground'"
+            :class="
+              activeTab === tab.id
+                ? 'text-primary-foreground/80'
+                : 'text-muted-foreground'
+            "
           >
             {{ t(tab.hint) }}
           </p>
@@ -46,22 +50,21 @@
       />
       <div class="mt-4 grid grid-cols-2 gap-2">
         <div class="rounded-xl bg-muted/60 px-3 py-2.5">
-          <p class="text-[11px] text-muted-foreground">{{ t('home.dishesCount') }}</p>
+          <p class="text-[11px] text-muted-foreground">
+            {{ t('home.dishesCount') }}
+          </p>
           <p class="mt-0.5 text-lg font-bold tabular-nums">
             {{ formatNum(total) }}
-          </p>
-        </div>
-        <div class="rounded-xl bg-muted/60 px-3 py-2.5">
-          <p class="text-[11px] text-muted-foreground">{{ t('home.publishedCount') }}</p>
-          <p class="mt-0.5 text-lg font-bold tabular-nums text-emerald-600">
-            {{ formatNum(publishedCount) }}
           </p>
         </div>
       </div>
     </SectionCard>
 
     <!-- Панель: Статистика -->
-    <SectionCard v-else-if="activeTab === 'stats'" :title="t('home.analyticsTitle')">
+    <SectionCard
+      v-else-if="activeTab === 'stats'"
+      :title="t('home.analyticsTitle')"
+    >
       <StatsDashboard />
     </SectionCard>
 
@@ -97,9 +100,17 @@
     </SectionCard>
 
     <!-- Панель: Отзывы -->
-    <SectionCard v-else-if="activeTab === 'reviews'" :title="t('reviews.title')">
-      <div v-if="reviewsLoading" class="flex items-center gap-2 py-4 text-sm text-muted-foreground">
-        <span class="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+    <SectionCard
+      v-else-if="activeTab === 'reviews'"
+      :title="t('reviews.title')"
+    >
+      <div
+        v-if="reviewsLoading"
+        class="flex items-center gap-2 py-4 text-sm text-muted-foreground"
+      >
+        <span
+          class="h-4 w-4 animate-spin rounded-full border-2 border-primary/30 border-t-primary"
+        />
         {{ t('reviews.loading') }}
       </div>
       <template v-else>
@@ -117,16 +128,24 @@
               <span class="truncate text-sm font-medium">
                 {{ review.name || t('reviews.anonymous') }}
               </span>
-              <span v-if="review.star" class="shrink-0 text-xs font-bold text-amber-500">
+              <span
+                v-if="review.star"
+                class="shrink-0 text-xs font-bold text-amber-500"
+              >
                 ★ {{ review.star }}
               </span>
             </div>
-            <p v-if="review.comment" class="line-clamp-2 text-xs text-muted-foreground">
+            <p
+              v-if="review.comment"
+              class="line-clamp-2 text-xs text-muted-foreground"
+            >
               {{ review.comment }}
             </p>
           </li>
         </ul>
-        <p v-else class="mb-4 text-sm text-muted-foreground">{{ t('reviews.noReviews') }}</p>
+        <p v-else class="mb-4 text-sm text-muted-foreground">
+          {{ t('reviews.noReviews') }}
+        </p>
         <router-link
           to="/reviews"
           class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
@@ -175,10 +194,30 @@ const reviewsLoading = ref(false)
 const reviewsLoaded = ref(false)
 
 const tabs = [
-  { id: 'info' as const, label: 'home.tabInfo', hint: 'home.tabInfoHint', icon: Info },
-  { id: 'stats' as const, label: 'home.tabStats', hint: 'home.tabStatsHint', icon: BarChart3 },
-  { id: 'menu' as const, label: 'home.tabMenu', hint: 'home.tabMenuHint', icon: UtensilsCrossed },
-  { id: 'reviews' as const, label: 'home.tabReviews', hint: 'home.tabReviewsHint', icon: MessageSquare },
+  {
+    id: 'info' as const,
+    label: 'home.tabInfo',
+    hint: 'home.tabInfoHint',
+    icon: Info,
+  },
+  {
+    id: 'stats' as const,
+    label: 'home.tabStats',
+    hint: 'home.tabStatsHint',
+    icon: BarChart3,
+  },
+  {
+    id: 'menu' as const,
+    label: 'home.tabMenu',
+    hint: 'home.tabMenuHint',
+    icon: UtensilsCrossed,
+  },
+  {
+    id: 'reviews' as const,
+    label: 'home.tabReviews',
+    hint: 'home.tabReviewsHint',
+    icon: MessageSquare,
+  },
 ]
 
 const formatNum = (n: number) => Intl.NumberFormat('ru-RU').format(n)

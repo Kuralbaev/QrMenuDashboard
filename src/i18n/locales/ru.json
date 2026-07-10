@@ -54,7 +54,7 @@
     "dateEnd": "Дата окончания",
     "dateApply": "Показать",
     "dateRangeError": "Дата начала не может быть позже даты окончания",
-    "chartOrdersByDay": "Заказы по дням",
+    "chartOrdersByDay": "Количество",
     "groupByDay": "По дням",
     "groupByMonth": "По месяцам",
     "groupByYear": "По годам",
